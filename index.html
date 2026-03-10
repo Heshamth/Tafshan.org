@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>تفشان | Tafshan - خذني لأي مكان</title>
-  <meta name="description" content="تفشان - اضغط الزر واكتشف مواقع غريبة وممتعة | Press the button and discover fun, quirky websites" />
+  <title>طفشان | Tafshan - خذني لأي مكان</title>
+  <meta name="description" content="طفشان - اضغط الزر واكتشف مواقع غريبة وممتعة | Press the button and discover fun, quirky websites" />
 
   <!-- Google Fonts: Cairo for Arabic + English display -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -37,7 +37,10 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
 
     body {
       background: var(--bg);
@@ -45,6 +48,7 @@
       font-family: var(--font-ar);
       min-height: 100vh;
       overflow-x: hidden;
+      overflow-y: auto;
       position: relative;
     }
 
@@ -677,7 +681,7 @@
   <!-- ===== NAVIGATION TOP BAR ===== -->
   <nav class="top-bar">
     <div class="logo">
-      <span class="logo-ar">تفشان</span>
+      <span class="logo-ar">طفشان</span>
       <span class="logo-en">TAFSHAN.ORG</span>
     </div>
     <div class="top-bar-actions">
@@ -697,7 +701,7 @@
     </p>
 
     <h1 class="hero-title">
-      <span class="line1" data-lang="ar">تفشان؟</span>
+      <span class="line1" data-lang="ar">طفشان؟</span>
       <span class="line1" data-lang="en">Bored?</span>
       <span class="line2" data-lang="ar">اضغط وانسَ الملل</span>
       <span class="line2" data-lang="en">Press it. Forget Boredom.</span>
@@ -719,7 +723,7 @@
       <div class="btn-outer-ring"></div>
       <button class="main-btn" id="mainBtn" onclick="goRandom()" aria-label="Go to random website">
         <span class="btn-icon">🎲</span>
-        <span class="btn-text-ar" data-lang="ar">تفشان!</span>
+        <span class="btn-text-ar" data-lang="ar">طفشان!</span>
         <span class="btn-text-en" data-lang="en">Tafshan!</span>
       </button>
     </div>
@@ -763,7 +767,7 @@
       <div class="step-card">
         <div class="step-num">٢</div>
         <div class="step-emoji">🎲</div>
-        <p class="step-text" data-lang="ar">اضغط زر "تفشان!" واترك القدر يقرر</p>
+        <p class="step-text" data-lang="ar">اضغط زر "طفشان!" واترك القدر يقرر</p>
         <p class="step-text" data-lang="en">Press "Tafshan!" and let fate decide</p>
       </div>
       <div class="step-card">
@@ -877,7 +881,8 @@
     btn.appendChild(ripple);
     setTimeout(() => ripple.remove(), 700);
 
-    const site = getRandomSite();
+    // Use the queue-based picker — no repeats until all sites seen
+    const site = getNextSite();
     const url = `portal.html?url=${encodeURIComponent(site.url)}&lang=${currentLang}`;
     window.location.href = url;
   }

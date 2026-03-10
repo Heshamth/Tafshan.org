@@ -3,37 +3,70 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>تفشان | Tafshan</title>
+  <title>طفشان | Tafshan</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Righteous&family=Noto+Kufi+Arabic:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Righteous&family=Noto+Kufi+Arabic:wght@400;700;900&display=swap" rel="stylesheet" />
 
   <style>
+    /* =========================================================
+       VARIABLES & RESET
+    ========================================================= */
     :root {
-      --bg:       #06060f;
-      --gold:     #f5b732;
-      --teal:     #2dd4c0;
-      --purple:   #9b5de5;
-      --text:     #ede8ff;
-      --text-dim: #9994b8;
-      --border:   rgba(255,255,255,0.1);
-      --bar-h:    58px;
-      --font-ar:  'Noto Kufi Arabic', 'Cairo', sans-serif;
-      --font-en:  'Righteous', 'Cairo', sans-serif;
+      --bg:        #06060f;
+      --gold:      #f5b732;
+      --teal:      #2dd4c0;
+      --purple:    #9b5de5;
+      --pink:      #f15bb5;
+      --text:      #ede8ff;
+      --text-dim:  #9994b8;
+      --card-bg:   rgba(255,255,255,0.05);
+      --border:    rgba(255,255,255,0.1);
+      --bar-h:     58px;
+      --font-ar:   'Noto Kufi Arabic', 'Cairo', sans-serif;
+      --font-en:   'Righteous', 'Cairo', sans-serif;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html, body {
-      height: 100%;
-      overflow: hidden;
+    html {
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
       font-family: var(--font-ar);
+      min-height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
     body.lang-en {
       direction: ltr;
       font-family: var(--font-en);
+    }
+
+    /* =========================================================
+       STARFIELD
+    ========================================================= */
+    #stars-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .geo-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpolygon points='40,5 75,25 75,55 40,75 5,55 5,25' fill='none' stroke='%23f5b732' stroke-width='1'/%3E%3Cpolygon points='40,15 65,28 65,52 40,65 15,52 15,28' fill='none' stroke='%232dd4c0' stroke-width='0.5'/%3E%3C/svg%3E");
+      background-size: 80px 80px;
     }
 
     /* =========================================================
@@ -49,21 +82,18 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
+      padding: 0 20px;
       gap: 10px;
-      background: rgba(6, 6, 15, 0.92);
+      background: rgba(6,6,15,0.93);
       backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border);
       box-shadow: 0 4px 30px rgba(0,0,0,0.5);
     }
 
-    /* Gradient accent line at bottom of bar */
     #portal-bar::after {
       content: '';
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: 0; left: 0; right: 0;
       height: 2px;
       background: linear-gradient(90deg, var(--gold), var(--teal), var(--purple), var(--gold));
       background-size: 300% 100%;
@@ -75,7 +105,6 @@
       to   { background-position: 300% 0%; }
     }
 
-    /* Logo */
     .bar-logo {
       text-decoration: none;
       display: flex;
@@ -86,7 +115,7 @@
 
     .bar-logo .ar {
       font-family: var(--font-ar);
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 900;
       background: linear-gradient(135deg, var(--gold), var(--teal));
       -webkit-background-clip: text;
@@ -96,48 +125,23 @@
 
     .bar-logo .en {
       font-family: var(--font-en);
-      font-size: 0.55rem;
+      font-size: 0.52rem;
       color: var(--text-dim);
       letter-spacing: 2px;
     }
 
-    /* Site info pill */
-    .site-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 1;
-      min-width: 0;
-      justify-content: center;
-    }
-
-    .site-emoji {
-      font-size: 1.1rem;
-      flex-shrink: 0;
-    }
-
-    .site-name {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 200px;
-    }
-
-    .site-counter {
+    /* Visit counter pill in bar */
+    .bar-counter-pill {
       font-family: var(--font-en);
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-dim);
       background: rgba(255,255,255,0.06);
       border: 1px solid var(--border);
-      padding: 3px 8px;
+      padding: 3px 10px;
       border-radius: 50px;
       flex-shrink: 0;
     }
 
-    /* Button group */
     .bar-btns {
       display: flex;
       align-items: center;
@@ -149,7 +153,7 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      padding: 7px 14px;
+      padding: 7px 15px;
       border-radius: 50px;
       font-size: 0.78rem;
       font-weight: 700;
@@ -161,48 +165,38 @@
       transition: all 0.2s ease;
       white-space: nowrap;
       -webkit-tap-highlight-color: transparent;
+      outline: none;
     }
 
     .bar-btn:hover {
       background: rgba(255,255,255,0.1);
-      border-color: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.25);
     }
 
     .bar-btn.primary {
       background: linear-gradient(135deg, var(--gold), #ff9a3c);
       color: #000;
       border-color: transparent;
-      box-shadow: 0 0 20px rgba(245,183,50,0.3);
+      box-shadow: 0 0 20px rgba(245,183,50,0.35);
     }
 
     .bar-btn.primary:hover {
-      box-shadow: 0 0 30px rgba(245,183,50,0.5);
-      transform: scale(1.03);
+      box-shadow: 0 0 35px rgba(245,183,50,0.55);
+      transform: scale(1.04);
     }
 
-    .bar-btn.primary:active {
-      transform: scale(0.97);
-    }
+    .bar-btn.primary:active { transform: scale(0.96); }
 
-    .bar-btn.open-btn {
-      border-color: rgba(45,212,192,0.3);
-      color: var(--teal);
-    }
-
-    .bar-btn.open-btn:hover {
-      background: rgba(45,212,192,0.1);
-      border-color: var(--teal);
-    }
-
-    /* Spinning loader on next button */
-    .btn-spin {
+    /* Spinning dice */
+    .dice-spin {
       display: inline-block;
-      animation: spin 0.6s linear infinite;
+      animation: spinOnce 0.5s ease forwards;
     }
 
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
+    @keyframes spinOnce {
+      from { transform: rotate(0deg) scale(1); }
+      50%  { transform: rotate(180deg) scale(1.3); }
+      to   { transform: rotate(360deg) scale(1); }
     }
 
     /* Lang toggle */
@@ -212,7 +206,6 @@
       border: 1px solid var(--border);
       border-radius: 50px;
       padding: 2px;
-      gap: 1px;
     }
 
     .lm-btn {
@@ -234,167 +227,274 @@
     }
 
     /* =========================================================
-       IFRAME AREA
+       MAIN CONTENT (below bar)
     ========================================================= */
-    #iframe-wrap {
-      position: fixed;
-      top: var(--bar-h);
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: #fff;
+    .portal-main {
+      position: relative;
+      z-index: 1;
+      padding-top: var(--bar-h);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-left: 24px;
+      padding-right: 24px;
+      padding-bottom: 40px;
     }
 
-    #site-frame {
+    /* =========================================================
+       LAUNCH CARD
+    ========================================================= */
+    .launch-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 28px;
+      padding: 52px 48px;
+      max-width: 560px;
       width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-    }
-
-    /* =========================================================
-       LOADING SCREEN
-    ========================================================= */
-    #loading-screen {
-      position: absolute;
-      inset: 0;
-      background: var(--bg);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      z-index: 10;
-      transition: opacity 0.5s ease;
-    }
-
-    #loading-screen.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .loader-emoji {
-      font-size: 3.5rem;
-      animation: bouncePop 0.8s ease infinite alternate;
-    }
-
-    @keyframes bouncePop {
-      from { transform: scale(0.9) rotate(-5deg); }
-      to   { transform: scale(1.1) rotate(5deg); }
-    }
-
-    .loader-text {
-      font-size: 1rem;
-      color: var(--text-dim);
       text-align: center;
-    }
-
-    .loader-bar {
-      width: 200px;
-      height: 4px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 2px;
+      position: relative;
       overflow: hidden;
+      animation: cardIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
-    .loader-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--gold), var(--teal));
-      border-radius: 2px;
-      animation: loadFill 2.5s ease forwards;
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(32px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0)   scale(1); }
     }
 
-    @keyframes loadFill {
-      from { width: 0%; }
-      to   { width: 90%; }
+    /* Glowing card border accent */
+    .launch-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, var(--gold), var(--teal), var(--purple));
+      z-index: -1;
+      opacity: 0.35;
     }
 
-    /* =========================================================
-       FALLBACK (when iframe blocked)
-    ========================================================= */
-    #fallback-screen {
+    .launch-card::after {
+      content: '';
       position: absolute;
       inset: 0;
+      border-radius: 28px;
       background: var(--bg);
-      display: none;
+      z-index: -1;
+    }
+
+    /* "NOW LAUNCHING" label */
+    .launch-eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeIn 0.4s ease 0.2s forwards;
+    }
+
+    /* Big emoji */
+    .launch-emoji {
+      font-size: 5rem;
+      line-height: 1;
+      margin-bottom: 24px;
+      display: block;
+      opacity: 0;
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
+      filter: drop-shadow(0 0 20px rgba(245,183,50,0.3));
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+      to   { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+
+    /* Site name */
+    .launch-title {
+      font-size: clamp(1.5rem, 5vw, 2.4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--gold), #ff9a3c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: 0;
+      animation: fadeIn 0.4s ease 0.45s forwards;
+    }
+
+    /* Description */
+    .launch-desc {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      margin-bottom: 36px;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeIn 0.4s ease 0.55s forwards;
+    }
+
+    /* Action buttons */
+    .launch-actions {
+      display: flex;
       flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      opacity: 0;
+      animation: fadeIn 0.4s ease 0.65s forwards;
+    }
+
+    .launch-open-btn {
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 20px;
-      z-index: 9;
-      padding: 24px;
-      text-align: center;
-    }
-
-    #fallback-screen.show { display: flex; }
-
-    .fallback-emoji { font-size: 4rem; }
-
-    .fallback-title {
-      font-size: 1.4rem;
-      font-weight: 900;
-      color: var(--text);
-    }
-
-    .fallback-desc {
-      font-size: 0.9rem;
-      color: var(--text-dim);
-      max-width: 400px;
-      line-height: 1.7;
-    }
-
-    .fallback-btns {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 8px;
-    }
-
-    .fallback-btn {
-      padding: 12px 24px;
-      border-radius: 50px;
-      font-size: 0.88rem;
+      gap: 10px;
+      width: 100%;
+      max-width: 320px;
+      padding: 16px 28px;
+      border-radius: 60px;
+      font-size: 1.05rem;
       font-weight: 700;
       cursor: pointer;
       border: none;
       font-family: inherit;
-      transition: all 0.2s ease;
-    }
-
-    .fallback-btn.open {
+      transition: all 0.25s ease;
       background: linear-gradient(135deg, var(--teal), #1a8f84);
       color: #000;
-      box-shadow: 0 4px 20px rgba(45,212,192,0.3);
+      box-shadow: 0 4px 30px rgba(45,212,192,0.35);
     }
 
-    .fallback-btn.open:hover {
+    .launch-open-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 40px rgba(45,212,192,0.5);
+    }
+
+    .launch-open-btn:active {
+      transform: translateY(0);
+    }
+
+    .launch-next-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 320px;
+      padding: 14px 28px;
+      border-radius: 60px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid rgba(245,183,50,0.4);
+      background: rgba(245,183,50,0.08);
+      color: var(--gold);
+      font-family: inherit;
+      transition: all 0.25s ease;
+    }
+
+    .launch-next-btn:hover {
+      background: rgba(245,183,50,0.15);
+      border-color: var(--gold);
       transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(45,212,192,0.4);
+      box-shadow: 0 6px 24px rgba(245,183,50,0.2);
     }
 
-    .fallback-btn.next {
-      background: linear-gradient(135deg, var(--gold), #ff9a3c);
-      color: #000;
-      box-shadow: 0 4px 20px rgba(245,183,50,0.3);
+    /* =========================================================
+       OPENED INDICATOR
+    ========================================================= */
+    .opened-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(45,212,192,0.12);
+      border: 1px solid rgba(45,212,192,0.3);
+      color: var(--teal);
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: all 0.3s ease;
     }
 
-    .fallback-btn.next:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(245,183,50,0.4);
+    .opened-badge.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
-    /* Fallback background pattern */
-    #fallback-screen::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpolygon points='40,5 75,25 75,55 40,75 5,55 5,25' fill='none' stroke='%23f5b732' stroke-width='1'/%3E%3C/svg%3E");
-      background-size: 80px 80px;
-      opacity: 0.025;
+    /* =========================================================
+       PROGRESS BAR (how many sites left in cycle)
+    ========================================================= */
+    .progress-section {
+      margin-top: 36px;
+      width: 100%;
+      max-width: 560px;
+      opacity: 0;
+      animation: fadeIn 0.4s ease 0.85s forwards;
     }
 
-    #fallback-screen > * { position: relative; z-index: 1; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .progress-track {
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--teal));
+      border-radius: 2px;
+      transition: width 0.6s ease;
+    }
+
+    /* =========================================================
+       AD SLOT BELOW CARD
+    ========================================================= */
+    .ad-portal {
+      margin-top: 32px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .ad-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px dashed rgba(255,255,255,0.08);
+      border-radius: 10px;
+      color: rgba(255,255,255,0.18);
+      font-size: 0.68rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: var(--font-en);
+      background: rgba(255,255,255,0.01);
+    }
+
+    .ad-placeholder.leaderboard {
+      width: 728px;
+      max-width: 100%;
+      height: 90px;
+    }
+
+    /* =========================================================
+       ANIMATIONS
+    ========================================================= */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
 
     /* =========================================================
        LANGUAGE
@@ -412,125 +512,126 @@
        RESPONSIVE
     ========================================================= */
     @media (max-width: 600px) {
-      .site-name { max-width: 100px; }
-      .site-counter { display: none; }
-      .bar-btn { padding: 6px 10px; font-size: 0.72rem; gap: 3px; }
+      .launch-card { padding: 36px 24px; border-radius: 20px; }
+      .launch-emoji { font-size: 3.8rem; }
+      .bar-logo .en { display: none; }
       .lang-mini { display: none; }
+      .bar-btn { padding: 6px 12px; }
+      .bar-counter-pill { display: none; }
     }
 
-    @media (max-width: 400px) {
-      #portal-bar { padding: 0 10px; gap: 6px; }
-      .bar-logo .en { display: none; }
+    @media (max-width: 380px) {
+      #portal-bar { padding: 0 12px; gap: 6px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ===== PORTAL TOP BAR ===== -->
-  <div id="portal-bar">
+<canvas id="stars-canvas"></canvas>
+<div class="geo-overlay"></div>
 
-    <!-- Logo: back to home -->
-    <a href="index.html" class="bar-logo" id="back-btn" title="العودة إلى تفشان / Back to Tafshan">
-      <span class="ar">تفشان</span>
-      <span class="en">TAFSHAN</span>
-    </a>
+<!-- ===== TOP PORTAL BAR ===== -->
+<div id="portal-bar">
 
-    <!-- Current site info -->
-    <div class="site-info">
-      <span class="site-emoji" id="bar-emoji">🌐</span>
-      <span class="site-name" id="bar-sitename">Loading...</span>
-      <span class="site-counter" id="bar-counter">#1</span>
-    </div>
+  <a href="index.html" class="bar-logo" title="العودة / Back">
+    <span class="ar">طفشان</span>
+    <span class="en">TAFSHAN</span>
+  </a>
 
-    <!-- Action buttons -->
-    <div class="bar-btns">
+  <span class="bar-counter-pill" id="bar-counter">#1</span>
 
-      <!-- Open in new tab -->
-      <button class="bar-btn open-btn" id="open-btn" onclick="openInTab()" title="فتح في تبويب جديد / Open in new tab">
-        ↗ <span data-lang="ar">فتح</span><span data-lang="en">Open</span>
-      </button>
+  <div class="bar-btns">
+    <button class="bar-btn" id="bar-open-btn" onclick="openSite()">
+      ↗ <span data-lang="ar">فتح</span><span data-lang="en">Open</span>
+    </button>
 
-      <!-- Next random site -->
-      <button class="bar-btn primary" id="next-btn" onclick="goNext()">
-        <span id="next-icon">🎲</span>
-        <span data-lang="ar">التالي</span><span data-lang="en">Next!</span>
-      </button>
+    <button class="bar-btn primary" id="bar-next-btn" onclick="goNext()">
+      <span id="bar-dice">🎲</span>
+      <span data-lang="ar">التالي</span><span data-lang="en">Next!</span>
+    </button>
 
-      <!-- Language toggle -->
-      <div class="lang-mini">
-        <button class="lm-btn active" id="lm-ar" onclick="setLang('ar')">ع</button>
-        <button class="lm-btn" id="lm-en" onclick="setLang('en')">EN</button>
-      </div>
-
+    <div class="lang-mini">
+      <button class="lm-btn active" id="lm-ar" onclick="setLang('ar')">ع</button>
+      <button class="lm-btn" id="lm-en" onclick="setLang('en')">EN</button>
     </div>
   </div>
 
-  <!-- ===== IFRAME AREA ===== -->
-  <div id="iframe-wrap">
+</div>
 
-    <!-- Loading screen -->
-    <div id="loading-screen">
-      <span class="loader-emoji" id="loading-emoji">🎲</span>
-      <p class="loader-text" id="loading-text">
-        <span data-lang="ar">جارٍ التحميل...</span>
-        <span data-lang="en">Launching...</span>
-      </p>
-      <div class="loader-bar">
-        <div class="loader-fill" id="loader-fill"></div>
-      </div>
+<!-- ===== MAIN AREA ===== -->
+<main class="portal-main">
+
+  <!-- Launch Card -->
+  <div class="launch-card" id="launch-card">
+
+    <p class="launch-eyebrow">
+      <span data-lang="ar">✦ جارٍ الإطلاق ✦</span>
+      <span data-lang="en">✦ NOW LAUNCHING ✦</span>
+    </p>
+
+    <!-- Opened confirmation badge (shown after auto-open) -->
+    <div class="opened-badge" id="opened-badge">
+      <span>✓</span>
+      <span data-lang="ar">تم فتح الموقع في تبويب جديد</span>
+      <span data-lang="en">Opened in a new tab</span>
     </div>
 
-    <!-- Fallback screen (shown when iframe is blocked) -->
-    <div id="fallback-screen">
-      <div class="fallback-emoji" id="fallback-emoji">🚀</div>
-      <h2 class="fallback-title" id="fallback-title">
-        <span data-lang="ar">الموقع جاهز!</span>
-        <span data-lang="en">Site is Ready!</span>
-      </h2>
-      <p class="fallback-desc" data-lang="ar">
-        هذا الموقع لا يسمح بالتضمين المباشر. اضغط "فتح" لتجربته في تبويب جديد، أو انتقل للموقع التالي.
-      </p>
-      <p class="fallback-desc" data-lang="en">
-        This site doesn't allow direct embedding. Click "Open" to experience it in a new tab, or jump to the next site!
-      </p>
-      <div class="fallback-btns">
-        <button class="fallback-btn open" onclick="openInTab()">
-          ↗ <span data-lang="ar">فتح الموقع</span><span data-lang="en">Open Site</span>
-        </button>
-        <button class="fallback-btn next" onclick="goNext()">
-          🎲 <span data-lang="ar">موقع آخر</span><span data-lang="en">Next Site</span>
-        </button>
-      </div>
-    </div>
+    <span class="launch-emoji" id="card-emoji">🎲</span>
+    <h1 class="launch-title" id="card-name">...</h1>
+    <p class="launch-desc" id="card-desc">...</p>
 
-    <!-- The iframe -->
-    <iframe
-      id="site-frame"
-      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation allow-top-navigation"
-      referrerpolicy="no-referrer"
-      title="Random Website"
-    ></iframe>
+    <div class="launch-actions">
+      <!-- Primary: Open the site -->
+      <button class="launch-open-btn" id="open-btn" onclick="openSite()">
+        <span>↗</span>
+        <span data-lang="ar">فتح الموقع الآن</span>
+        <span data-lang="en">Open Site Now</span>
+      </button>
+
+      <!-- Secondary: Next random site -->
+      <button class="launch-next-btn" id="next-btn" onclick="goNext()">
+        <span>🎲</span>
+        <span data-lang="ar">موقع آخر</span>
+        <span data-lang="en">Next Random Site</span>
+      </button>
+    </div>
 
   </div>
+
+  <!-- Progress bar -->
+  <div class="progress-section">
+    <div class="progress-label">
+      <span data-lang="ar" id="prog-label-ar">زيارة ١ من ٣٠</span>
+      <span data-lang="en" id="prog-label-en">Visit 1 of 30</span>
+      <span id="prog-pct" style="color: var(--gold); font-family: var(--font-en);">3%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="prog-fill" style="width: 3%"></div>
+    </div>
+  </div>
+
+  <!-- Ad slot -->
+  <div class="ad-portal">
+    <div class="ad-placeholder leaderboard">
+      <!-- Google AdSense 728×90 — replace this div -->
+      Google Ads — 728×90
+    </div>
+  </div>
+
+</main>
 
 <script src="sites.js"></script>
 <script>
   /* ====================================================
-     STATE
+     LANGUAGE
   ==================================================== */
+  let currentLang = 'ar';
   let currentSite = null;
-  let visitCount   = 0;
-  let currentLang  = 'ar';
-  let loadTimeout  = null;
 
-  /* ====================================================
-     LANGUAGE SYSTEM
-  ==================================================== */
   function setLang(lang) {
     currentLang = lang;
     localStorage.setItem('tafshan-lang', lang);
     const html = document.getElementById('html-root');
-
     if (lang === 'en') {
       html.setAttribute('lang', 'en');
       html.setAttribute('dir', 'ltr');
@@ -544,134 +645,157 @@
       document.getElementById('lm-ar').classList.add('active');
       document.getElementById('lm-en').classList.remove('active');
     }
+    // Re-render site info in the right language
+    if (currentSite) renderCard(currentSite);
   }
 
   /* ====================================================
-     LOAD A SITE
+     RENDER CARD
   ==================================================== */
-  function loadSite(site) {
-    currentSite = site;
-    visitCount++;
+  function renderCard(site) {
+    document.getElementById('card-emoji').textContent = site.emoji || '🌐';
+    document.getElementById('card-name').textContent  = currentLang === 'ar' ? site.nameAr : site.name;
+    document.getElementById('card-desc').textContent  = currentLang === 'ar' ? site.descAr  : site.desc;
+    document.title = `طفشان | ${site.name}`;
 
-    // Update bar info
-    document.getElementById('bar-emoji').textContent    = site.emoji || '🌐';
-    document.getElementById('bar-sitename').textContent = currentLang === 'ar' ? site.nameAr : site.name;
-    document.getElementById('bar-counter').textContent  = `#${visitCount}`;
-    document.title = `تفشان | ${site.name}`;
+    // Bar counter
+    const count = getVisitCount();
+    document.getElementById('bar-counter').textContent = `#${count}`;
 
-    // Update loading screen emoji
-    document.getElementById('loading-emoji').textContent = site.emoji || '🎲';
-
-    // Show loading, hide fallback
-    const loadingEl  = document.getElementById('loading-screen');
-    const fallbackEl = document.getElementById('fallback-screen');
-    const frame      = document.getElementById('site-frame');
-
-    loadingEl.classList.remove('hidden');
-    fallbackEl.classList.remove('show');
-
-    // Reset loader animation
-    const fill = document.getElementById('loader-fill');
-    fill.style.animation = 'none';
-    void fill.offsetHeight; // reflow
-    fill.style.animation = '';
-
-    // Clear previous timeout
-    if (loadTimeout) clearTimeout(loadTimeout);
-
-    // Set iframe src
-    frame.src = '';
-    setTimeout(() => {
-      frame.src = site.url;
-    }, 50);
-
-    // Hide loading after delay (iframe either loaded or blocked)
-    loadTimeout = setTimeout(() => {
-      loadingEl.classList.add('hidden');
-    }, 2500);
-
-    // Iframe onload
-    frame.onload = () => {
-      clearTimeout(loadTimeout);
-      setTimeout(() => {
-        loadingEl.classList.add('hidden');
-      }, 300);
-    };
-
-    // Iframe onerror (network fail etc)
-    frame.onerror = () => {
-      clearTimeout(loadTimeout);
-      loadingEl.classList.add('hidden');
-      showFallback(site);
-    };
-
-    // Fallback: if after 5 seconds frame seems empty (can't really detect cross-origin block)
-    // We rely on the fact that most blocked iframes show an error page,
-    // which still triggers onload. Only show fallback on explicit error.
-  }
-
-  function showFallback(site) {
-    document.getElementById('fallback-emoji').textContent = site.emoji || '🚀';
-    document.getElementById('fallback-screen').classList.add('show');
+    // Progress bar (cycles of 30)
+    const total    = SITES.length;
+    const position = ((count - 1) % total) + 1;
+    const pct      = Math.round((position / total) * 100);
+    document.getElementById('prog-fill').style.width = pct + '%';
+    document.getElementById('prog-pct').textContent  = pct + '%';
+    document.getElementById('prog-label-ar').textContent = `زيارة ${position} من ${total}`;
+    document.getElementById('prog-label-en').textContent = `Visit ${position} of ${total}`;
   }
 
   /* ====================================================
-     NAVIGATION
+     OPEN SITE
+  ==================================================== */
+  function openSite() {
+    if (!currentSite) return;
+    window.open(currentSite.url, '_blank', 'noopener,noreferrer');
+    // Show "opened" confirmation badge
+    const badge = document.getElementById('opened-badge');
+    badge.classList.add('show');
+  }
+
+  /* ====================================================
+     GO NEXT — pick next from shuffle queue, re-render card, auto-open
   ==================================================== */
   function goNext() {
-    const icon = document.getElementById('next-icon');
-    icon.classList.add('btn-spin');
+    // Spin the dice icon
+    const dice = document.getElementById('bar-dice');
+    dice.classList.remove('dice-spin');
+    void dice.offsetWidth;
+    dice.classList.add('dice-spin');
+    dice.addEventListener('animationend', () => dice.classList.remove('dice-spin'), { once: true });
+
+    // Hide the opened badge immediately
+    document.getElementById('opened-badge').classList.remove('show');
+
+    // Animate card out, swap content, animate back in
+    const card = document.getElementById('launch-card');
+    card.style.transition = 'opacity 0.2s, transform 0.2s';
+    card.style.opacity    = '0';
+    card.style.transform  = 'translateY(16px) scale(0.97)';
 
     setTimeout(() => {
-      icon.classList.remove('btn-spin');
-      const next = getRandomSite(currentSite ? currentSite.url : null);
-      loadSite(next);
-    }, 400);
-  }
+      currentSite = getNextSite();
+      renderCard(currentSite);
 
-  function openInTab() {
-    if (currentSite) {
-      window.open(currentSite.url, '_blank', 'noopener,noreferrer');
-    }
+      card.style.opacity   = '1';
+      card.style.transform = 'translateY(0) scale(1)';
+
+      // Auto-open new site after card is visible
+      setTimeout(() => {
+        openSite();
+      }, 300);
+    }, 220);
   }
 
   /* ====================================================
      INIT
   ==================================================== */
   function init() {
-    // Read lang from URL param or localStorage
-    const params = new URLSearchParams(window.location.search);
-    const urlLang = params.get('lang');
+    // Language
+    const params   = new URLSearchParams(window.location.search);
+    const urlLang  = params.get('lang');
     const savedLang = localStorage.getItem('tafshan-lang');
-    const lang = urlLang || savedLang || 'ar';
-    setLang(lang);
+    setLang(urlLang || savedLang || 'ar');
 
-    // Get site from URL param or pick random
-    const urlSite = params.get('url');
+    // Site: read from URL param (set by index.html's goRandom)
+    const urlSiteEncoded = params.get('url');
 
-    if (urlSite) {
-      const decoded = decodeURIComponent(urlSite);
-      // Find matching site in list
-      const found = SITES.find(s => s.url === decoded);
-      if (found) {
-        loadSite(found);
-      } else {
-        // URL passed but not in list, build a generic site object
-        loadSite({
-          url: decoded,
-          name: new URL(decoded).hostname,
-          nameAr: new URL(decoded).hostname,
-          desc: '',
-          descAr: '',
-          emoji: '🌐'
-        });
-      }
+    if (urlSiteEncoded) {
+      const decoded = decodeURIComponent(urlSiteEncoded);
+      currentSite   = SITES.find(s => s.url === decoded) || {
+        url:    decoded,
+        name:   new URL(decoded).hostname,
+        nameAr: new URL(decoded).hostname,
+        desc:   '',
+        descAr: '',
+        emoji:  '🌐'
+      };
     } else {
-      // No site specified, pick random
-      loadSite(getRandomSite());
+      // No URL param — pick from queue
+      currentSite = getNextSite();
     }
+
+    renderCard(currentSite);
+
+    // Auto-open the site as soon as the card is rendered
+    setTimeout(() => {
+      openSite();
+    }, 600);
   }
 
+  /* ====================================================
+     STARFIELD
+  ==================================================== */
+  const canvas = document.getElementById('stars-canvas');
+  const ctx    = canvas.getContext('2d');
+  let stars    = [];
+
+  function resizeCanvas() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    stars = Array.from({ length: 160 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.4 + 0.3,
+      alpha: Math.random() * 0.8 + 0.2,
+      speed: Math.random() * 0.007 + 0.003,
+      offset: Math.random() * Math.PI * 2
+    }));
+  }
+
+  function drawStars(t) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      const tw = 0.5 + 0.5 * Math.sin(t * s.speed * 60 + s.offset);
+      ctx.globalAlpha = s.alpha * tw;
+      ctx.fillStyle   = Math.random() > 0.97 ? '#f5b732' : (Math.random() > 0.85 ? '#2dd4c0' : '#fff');
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  function animate(t) {
+    drawStars(t / 1000);
+    requestAnimationFrame(animate);
+  }
+
+  resizeCanvas();
+  requestAnimationFrame(animate);
+  window.addEventListener('resize', resizeCanvas);
+
+  // Boot
   init();
 </script>
 </body>
