@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تفشان | Tafshan</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Righteous&family=Noto+Kufi+Arabic:wght@400;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg:       #06060f;
+      --gold:     #f5b732;
+      --teal:     #2dd4c0;
+      --purple:   #9b5de5;
+      --text:     #ede8ff;
+      --text-dim: #9994b8;
+      --border:   rgba(255,255,255,0.1);
+      --bar-h:    58px;
+      --font-ar:  'Noto Kufi Arabic', 'Cairo', sans-serif;
+      --font-en:  'Righteous', 'Cairo', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: var(--font-ar);
+    }
+
+    body.lang-en {
+      direction: ltr;
+      font-family: var(--font-en);
+    }
+
+    /* =========================================================
+       TOP PORTAL BAR
+    ========================================================= */
+    #portal-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--bar-h);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      gap: 10px;
+      background: rgba(6, 6, 15, 0.92);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+    }
+
+    /* Gradient accent line at bottom of bar */
+    #portal-bar::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--teal), var(--purple), var(--gold));
+      background-size: 300% 100%;
+      animation: barShimmer 4s linear infinite;
+    }
+
+    @keyframes barShimmer {
+      from { background-position: 0% 0%; }
+      to   { background-position: 300% 0%; }
+    }
+
+    /* Logo */
+    .bar-logo {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .bar-logo .ar {
+      font-family: var(--font-ar);
+      font-size: 1.15rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--gold), var(--teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .bar-logo .en {
+      font-family: var(--font-en);
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+    }
+
+    /* Site info pill */
+    .site-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+      justify-content: center;
+    }
+
+    .site-emoji {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .site-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+    }
+
+    .site-counter {
+      font-family: var(--font-en);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 50px;
+      flex-shrink: 0;
+    }
+
+    /* Button group */
+    .bar-btns {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .bar-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 14px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      font-family: inherit;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .bar-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    .bar-btn.primary {
+      background: linear-gradient(135deg, var(--gold), #ff9a3c);
+      color: #000;
+      border-color: transparent;
+      box-shadow: 0 0 20px rgba(245,183,50,0.3);
+    }
+
+    .bar-btn.primary:hover {
+      box-shadow: 0 0 30px rgba(245,183,50,0.5);
+      transform: scale(1.03);
+    }
+
+    .bar-btn.primary:active {
+      transform: scale(0.97);
+    }
+
+    .bar-btn.open-btn {
+      border-color: rgba(45,212,192,0.3);
+      color: var(--teal);
+    }
+
+    .bar-btn.open-btn:hover {
+      background: rgba(45,212,192,0.1);
+      border-color: var(--teal);
+    }
+
+    /* Spinning loader on next button */
+    .btn-spin {
+      display: inline-block;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* Lang toggle */
+    .lang-mini {
+      display: flex;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 2px;
+      gap: 1px;
+    }
+
+    .lm-btn {
+      padding: 4px 10px;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-dim);
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .lm-btn.active {
+      background: linear-gradient(135deg, var(--gold), #e6953a);
+      color: #000;
+    }
+
+    /* =========================================================
+       IFRAME AREA
+    ========================================================= */
+    #iframe-wrap {
+      position: fixed;
+      top: var(--bar-h);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #fff;
+    }
+
+    #site-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* =========================================================
+       LOADING SCREEN
+    ========================================================= */
+    #loading-screen {
+      position: absolute;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      z-index: 10;
+      transition: opacity 0.5s ease;
+    }
+
+    #loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-emoji {
+      font-size: 3.5rem;
+      animation: bouncePop 0.8s ease infinite alternate;
+    }
+
+    @keyframes bouncePop {
+      from { transform: scale(0.9) rotate(-5deg); }
+      to   { transform: scale(1.1) rotate(5deg); }
+    }
+
+    .loader-text {
+      font-size: 1rem;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .loader-bar {
+      width: 200px;
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .loader-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--teal));
+      border-radius: 2px;
+      animation: loadFill 2.5s ease forwards;
+    }
+
+    @keyframes loadFill {
+      from { width: 0%; }
+      to   { width: 90%; }
+    }
+
+    /* =========================================================
+       FALLBACK (when iframe blocked)
+    ========================================================= */
+    #fallback-screen {
+      position: absolute;
+      inset: 0;
+      background: var(--bg);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      z-index: 9;
+      padding: 24px;
+      text-align: center;
+    }
+
+    #fallback-screen.show { display: flex; }
+
+    .fallback-emoji { font-size: 4rem; }
+
+    .fallback-title {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .fallback-desc {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      max-width: 400px;
+      line-height: 1.7;
+    }
+
+    .fallback-btns {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    .fallback-btn {
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .fallback-btn.open {
+      background: linear-gradient(135deg, var(--teal), #1a8f84);
+      color: #000;
+      box-shadow: 0 4px 20px rgba(45,212,192,0.3);
+    }
+
+    .fallback-btn.open:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(45,212,192,0.4);
+    }
+
+    .fallback-btn.next {
+      background: linear-gradient(135deg, var(--gold), #ff9a3c);
+      color: #000;
+      box-shadow: 0 4px 20px rgba(245,183,50,0.3);
+    }
+
+    .fallback-btn.next:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(245,183,50,0.4);
+    }
+
+    /* Fallback background pattern */
+    #fallback-screen::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpolygon points='40,5 75,25 75,55 40,75 5,55 5,25' fill='none' stroke='%23f5b732' stroke-width='1'/%3E%3C/svg%3E");
+      background-size: 80px 80px;
+      opacity: 0.025;
+    }
+
+    #fallback-screen > * { position: relative; z-index: 1; }
+
+    /* =========================================================
+       LANGUAGE
+    ========================================================= */
+    [data-lang="en"] { display: none; }
+    [data-lang="ar"] { display: block; }
+    .lang-en [data-lang="en"] { display: block; }
+    .lang-en [data-lang="ar"] { display: none; }
+    span[data-lang="en"] { display: none; }
+    span[data-lang="ar"] { display: inline; }
+    .lang-en span[data-lang="en"] { display: inline; }
+    .lang-en span[data-lang="ar"] { display: none; }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+    @media (max-width: 600px) {
+      .site-name { max-width: 100px; }
+      .site-counter { display: none; }
+      .bar-btn { padding: 6px 10px; font-size: 0.72rem; gap: 3px; }
+      .lang-mini { display: none; }
+    }
+
+    @media (max-width: 400px) {
+      #portal-bar { padding: 0 10px; gap: 6px; }
+      .bar-logo .en { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== PORTAL TOP BAR ===== -->
+  <div id="portal-bar">
+
+    <!-- Logo: back to home -->
+    <a href="index.html" class="bar-logo" id="back-btn" title="العودة إلى تفشان / Back to Tafshan">
+      <span class="ar">تفشان</span>
+      <span class="en">TAFSHAN</span>
+    </a>
+
+    <!-- Current site info -->
+    <div class="site-info">
+      <span class="site-emoji" id="bar-emoji">🌐</span>
+      <span class="site-name" id="bar-sitename">Loading...</span>
+      <span class="site-counter" id="bar-counter">#1</span>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="bar-btns">
+
+      <!-- Open in new tab -->
+      <button class="bar-btn open-btn" id="open-btn" onclick="openInTab()" title="فتح في تبويب جديد / Open in new tab">
+        ↗ <span data-lang="ar">فتح</span><span data-lang="en">Open</span>
+      </button>
+
+      <!-- Next random site -->
+      <button class="bar-btn primary" id="next-btn" onclick="goNext()">
+        <span id="next-icon">🎲</span>
+        <span data-lang="ar">التالي</span><span data-lang="en">Next!</span>
+      </button>
+
+      <!-- Language toggle -->
+      <div class="lang-mini">
+        <button class="lm-btn active" id="lm-ar" onclick="setLang('ar')">ع</button>
+        <button class="lm-btn" id="lm-en" onclick="setLang('en')">EN</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== IFRAME AREA ===== -->
+  <div id="iframe-wrap">
+
+    <!-- Loading screen -->
+    <div id="loading-screen">
+      <span class="loader-emoji" id="loading-emoji">🎲</span>
+      <p class="loader-text" id="loading-text">
+        <span data-lang="ar">جارٍ التحميل...</span>
+        <span data-lang="en">Launching...</span>
+      </p>
+      <div class="loader-bar">
+        <div class="loader-fill" id="loader-fill"></div>
+      </div>
+    </div>
+
+    <!-- Fallback screen (shown when iframe is blocked) -->
+    <div id="fallback-screen">
+      <div class="fallback-emoji" id="fallback-emoji">🚀</div>
+      <h2 class="fallback-title" id="fallback-title">
+        <span data-lang="ar">الموقع جاهز!</span>
+        <span data-lang="en">Site is Ready!</span>
+      </h2>
+      <p class="fallback-desc" data-lang="ar">
+        هذا الموقع لا يسمح بالتضمين المباشر. اضغط "فتح" لتجربته في تبويب جديد، أو انتقل للموقع التالي.
+      </p>
+      <p class="fallback-desc" data-lang="en">
+        This site doesn't allow direct embedding. Click "Open" to experience it in a new tab, or jump to the next site!
+      </p>
+      <div class="fallback-btns">
+        <button class="fallback-btn open" onclick="openInTab()">
+          ↗ <span data-lang="ar">فتح الموقع</span><span data-lang="en">Open Site</span>
+        </button>
+        <button class="fallback-btn next" onclick="goNext()">
+          🎲 <span data-lang="ar">موقع آخر</span><span data-lang="en">Next Site</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- The iframe -->
+    <iframe
+      id="site-frame"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation allow-top-navigation"
+      referrerpolicy="no-referrer"
+      title="Random Website"
+    ></iframe>
+
+  </div>
+
+<script src="sites.js"></script>
+<script>
+  /* ====================================================
+     STATE
+  ==================================================== */
+  let currentSite = null;
+  let visitCount   = 0;
+  let currentLang  = 'ar';
+  let loadTimeout  = null;
+
+  /* ====================================================
+     LANGUAGE SYSTEM
+  ==================================================== */
+  function setLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('tafshan-lang', lang);
+    const html = document.getElementById('html-root');
+
+    if (lang === 'en') {
+      html.setAttribute('lang', 'en');
+      html.setAttribute('dir', 'ltr');
+      html.classList.add('lang-en');
+      document.getElementById('lm-ar').classList.remove('active');
+      document.getElementById('lm-en').classList.add('active');
+    } else {
+      html.setAttribute('lang', 'ar');
+      html.setAttribute('dir', 'rtl');
+      html.classList.remove('lang-en');
+      document.getElementById('lm-ar').classList.add('active');
+      document.getElementById('lm-en').classList.remove('active');
+    }
+  }
+
+  /* ====================================================
+     LOAD A SITE
+  ==================================================== */
+  function loadSite(site) {
+    currentSite = site;
+    visitCount++;
+
+    // Update bar info
+    document.getElementById('bar-emoji').textContent    = site.emoji || '🌐';
+    document.getElementById('bar-sitename').textContent = currentLang === 'ar' ? site.nameAr : site.name;
+    document.getElementById('bar-counter').textContent  = `#${visitCount}`;
+    document.title = `تفشان | ${site.name}`;
+
+    // Update loading screen emoji
+    document.getElementById('loading-emoji').textContent = site.emoji || '🎲';
+
+    // Show loading, hide fallback
+    const loadingEl  = document.getElementById('loading-screen');
+    const fallbackEl = document.getElementById('fallback-screen');
+    const frame      = document.getElementById('site-frame');
+
+    loadingEl.classList.remove('hidden');
+    fallbackEl.classList.remove('show');
+
+    // Reset loader animation
+    const fill = document.getElementById('loader-fill');
+    fill.style.animation = 'none';
+    void fill.offsetHeight; // reflow
+    fill.style.animation = '';
+
+    // Clear previous timeout
+    if (loadTimeout) clearTimeout(loadTimeout);
+
+    // Set iframe src
+    frame.src = '';
+    setTimeout(() => {
+      frame.src = site.url;
+    }, 50);
+
+    // Hide loading after delay (iframe either loaded or blocked)
+    loadTimeout = setTimeout(() => {
+      loadingEl.classList.add('hidden');
+    }, 2500);
+
+    // Iframe onload
+    frame.onload = () => {
+      clearTimeout(loadTimeout);
+      setTimeout(() => {
+        loadingEl.classList.add('hidden');
+      }, 300);
+    };
+
+    // Iframe onerror (network fail etc)
+    frame.onerror = () => {
+      clearTimeout(loadTimeout);
+      loadingEl.classList.add('hidden');
+      showFallback(site);
+    };
+
+    // Fallback: if after 5 seconds frame seems empty (can't really detect cross-origin block)
+    // We rely on the fact that most blocked iframes show an error page,
+    // which still triggers onload. Only show fallback on explicit error.
+  }
+
+  function showFallback(site) {
+    document.getElementById('fallback-emoji').textContent = site.emoji || '🚀';
+    document.getElementById('fallback-screen').classList.add('show');
+  }
+
+  /* ====================================================
+     NAVIGATION
+  ==================================================== */
+  function goNext() {
+    const icon = document.getElementById('next-icon');
+    icon.classList.add('btn-spin');
+
+    setTimeout(() => {
+      icon.classList.remove('btn-spin');
+      const next = getRandomSite(currentSite ? currentSite.url : null);
+      loadSite(next);
+    }, 400);
+  }
+
+  function openInTab() {
+    if (currentSite) {
+      window.open(currentSite.url, '_blank', 'noopener,noreferrer');
+    }
+  }
+
+  /* ====================================================
+     INIT
+  ==================================================== */
+  function init() {
+    // Read lang from URL param or localStorage
+    const params = new URLSearchParams(window.location.search);
+    const urlLang = params.get('lang');
+    const savedLang = localStorage.getItem('tafshan-lang');
+    const lang = urlLang || savedLang || 'ar';
+    setLang(lang);
+
+    // Get site from URL param or pick random
+    const urlSite = params.get('url');
+
+    if (urlSite) {
+      const decoded = decodeURIComponent(urlSite);
+      // Find matching site in list
+      const found = SITES.find(s => s.url === decoded);
+      if (found) {
+        loadSite(found);
+      } else {
+        // URL passed but not in list, build a generic site object
+        loadSite({
+          url: decoded,
+          name: new URL(decoded).hostname,
+          nameAr: new URL(decoded).hostname,
+          desc: '',
+          descAr: '',
+          emoji: '🌐'
+        });
+      }
+    } else {
+      // No site specified, pick random
+      loadSite(getRandomSite());
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>

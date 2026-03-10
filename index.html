@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تفشان | Tafshan - خذني لأي مكان</title>
+  <meta name="description" content="تفشان - اضغط الزر واكتشف مواقع غريبة وممتعة | Press the button and discover fun, quirky websites" />
+
+  <!-- Google Fonts: Cairo for Arabic + English display -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Righteous&family=Noto+Kufi+Arabic:wght@400;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================
+       CSS VARIABLES & RESET
+    ========================================================= */
+    :root {
+      --bg:        #06060f;
+      --bg2:       #0d0d20;
+      --gold:      #f5b732;
+      --gold-dim:  #b88520;
+      --teal:      #2dd4c0;
+      --teal-dim:  #1a8f84;
+      --purple:    #9b5de5;
+      --pink:      #f15bb5;
+      --text:      #ede8ff;
+      --text-dim:  #9994b8;
+      --card-bg:   rgba(255,255,255,0.04);
+      --border:    rgba(255,255,255,0.08);
+      --glow-gold: 0 0 40px rgba(245,183,50,0.4), 0 0 80px rgba(245,183,50,0.15);
+      --glow-teal: 0 0 40px rgba(45,212,192,0.4), 0 0 80px rgba(45,212,192,0.15);
+      --radius:    16px;
+      --font-ar:   'Noto Kufi Arabic', 'Cairo', sans-serif;
+      --font-en:   'Righteous', 'Cairo', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ar);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body.lang-en {
+      direction: ltr;
+      font-family: var(--font-en);
+    }
+
+    /* =========================================================
+       STARFIELD BACKGROUND
+    ========================================================= */
+    #stars-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* =========================================================
+       GEOMETRIC PATTERN OVERLAY
+    ========================================================= */
+    .geo-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpolygon points='40,5 75,25 75,55 40,75 5,55 5,25' fill='none' stroke='%23f5b732' stroke-width='1'/%3E%3Cpolygon points='40,15 65,28 65,52 40,65 15,52 15,28' fill='none' stroke='%232dd4c0' stroke-width='0.5'/%3E%3Cline x1='40' y1='5' x2='40' y2='75' stroke='%23f5b732' stroke-width='0.3'/%3E%3Cline x1='5' y1='25' x2='75' y2='55' stroke='%23f5b732' stroke-width='0.3'/%3E%3Cline x1='75' y1='25' x2='5' y2='55' stroke='%23f5b732' stroke-width='0.3'/%3E%3C/svg%3E");
+      background-size: 80px 80px;
+    }
+
+    /* =========================================================
+       MAIN LAYOUT
+    ========================================================= */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* =========================================================
+       TOP BAR
+    ========================================================= */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      background: rgba(6,6,15,0.6);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .logo-ar {
+      font-family: var(--font-ar);
+      font-size: 1.6rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--gold), var(--teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-en {
+      font-family: var(--font-en);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .top-bar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Language toggle */
+    .lang-toggle {
+      display: flex;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 3px;
+      gap: 2px;
+      cursor: pointer;
+    }
+
+    .lang-btn {
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      background: transparent;
+      color: var(--text-dim);
+      font-family: inherit;
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(135deg, var(--gold), #e6953a);
+      color: #000;
+      box-shadow: 0 2px 12px rgba(245,183,50,0.4);
+    }
+
+    /* =========================================================
+       GOOGLE ADS — TOP BANNER
+    ========================================================= */
+    .ad-top {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ad-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px dashed rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.2);
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: var(--font-en);
+      background: rgba(255,255,255,0.01);
+    }
+
+    .ad-placeholder.leaderboard {
+      width: 728px;
+      max-width: 100%;
+      height: 90px;
+    }
+
+    .ad-placeholder.rectangle {
+      width: 300px;
+      height: 250px;
+    }
+
+    /* =========================================================
+       HERO SECTION
+    ========================================================= */
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px 40px;
+      text-align: center;
+      gap: 0;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.2s forwards;
+    }
+
+    .hero-title {
+      font-size: clamp(2.8rem, 8vw, 6.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.4s forwards;
+    }
+
+    .hero-title .line1 {
+      display: block;
+      background: linear-gradient(135deg, var(--gold) 0%, #ff9a3c 50%, var(--pink) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-title .line2 {
+      display: block;
+      background: linear-gradient(135deg, var(--teal) 0%, var(--purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 0.55em;
+      margin-top: 4px;
+    }
+
+    .hero-sub {
+      font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+      color: var(--text-dim);
+      max-width: 520px;
+      line-height: 1.8;
+      margin-bottom: 52px;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.6s forwards;
+    }
+
+    /* =========================================================
+       THE BIG BUTTON
+    ========================================================= */
+    .btn-wrapper {
+      position: relative;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.8s forwards;
+      margin-bottom: 32px;
+    }
+
+    /* Pulsing ring behind button */
+    .btn-ring {
+      position: absolute;
+      inset: -30px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      opacity: 0;
+      animation: ringPulse 2.5s ease-in-out 1.5s infinite;
+    }
+
+    .btn-ring:nth-child(2) {
+      animation-delay: 2s;
+      border-color: var(--teal);
+    }
+
+    @keyframes ringPulse {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    .main-btn {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-ar);
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #000;
+      background: conic-gradient(from 0deg, var(--gold), #ff9a3c, var(--gold), #ffd166, var(--gold));
+      box-shadow: var(--glow-gold), inset 0 2px 0 rgba(255,255,255,0.3);
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      z-index: 1;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+
+    .lang-en .main-btn {
+      font-family: var(--font-en);
+    }
+
+    .main-btn::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      background: conic-gradient(from 180deg, #ffd166, #ff9a3c, var(--gold));
+      z-index: -1;
+    }
+
+    .main-btn:hover {
+      transform: scale(1.05) translateY(-4px);
+      box-shadow: 0 0 60px rgba(245,183,50,0.6), 0 0 120px rgba(245,183,50,0.2), inset 0 2px 0 rgba(255,255,255,0.3);
+    }
+
+    .main-btn:active {
+      transform: scale(0.96) translateY(2px);
+      box-shadow: 0 0 20px rgba(245,183,50,0.3);
+    }
+
+    .btn-icon {
+      font-size: 2.4rem;
+      line-height: 1;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .btn-text-ar,
+    .btn-text-en {
+      line-height: 1;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+      letter-spacing: -0.5px;
+    }
+
+    /* Ripple effect */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      animation: rippleAnim 0.6s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes rippleAnim {
+      from { transform: scale(0); opacity: 1; }
+      to { transform: scale(3); opacity: 0; }
+    }
+
+    /* =========================================================
+       COUNTER & STATS
+    ========================================================= */
+    .stats-row {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 1s forwards;
+      margin-bottom: 48px;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--gold);
+      font-family: var(--font-en);
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 32px;
+      background: var(--border);
+    }
+
+    /* =========================================================
+       HOW IT WORKS
+    ========================================================= */
+    .how-section {
+      padding: 20px 24px 60px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 1.2s forwards;
+    }
+
+    .how-title {
+      text-align: center;
+      font-size: 1rem;
+      color: var(--text-dim);
+      margin-bottom: 28px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+
+    .how-steps {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .step-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      text-align: center;
+      flex: 1;
+      min-width: 160px;
+      max-width: 220px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(245,183,50,0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .step-card:hover::before { opacity: 1; }
+    .step-card:hover { border-color: rgba(245,183,50,0.3); transform: translateY(-4px); }
+
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #ff9a3c);
+      color: #000;
+      font-weight: 900;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-family: var(--font-en);
+    }
+
+    .step-emoji { font-size: 1.6rem; margin-bottom: 8px; }
+
+    .step-text {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* =========================================================
+       BOTTOM AD + COFFEE SECTION
+    ========================================================= */
+    .bottom-section {
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      background: rgba(255,255,255,0.01);
+    }
+
+    .support-row {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      justify-content: center;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    /* Buy Me a Coffee */
+    .coffee-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      text-align: center;
+      min-width: 240px;
+      max-width: 300px;
+      flex: 1;
+      transition: all 0.3s ease;
+    }
+
+    .coffee-card:hover {
+      border-color: rgba(255,210,60,0.4);
+      box-shadow: 0 0 30px rgba(255,210,60,0.1);
+    }
+
+    .coffee-emoji { font-size: 2.4rem; margin-bottom: 10px; }
+
+    .coffee-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .coffee-desc {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+
+    .coffee-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      background: linear-gradient(135deg, #FFDD00, #FBB034);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.88rem;
+      border-radius: 50px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 20px rgba(255,200,0,0.3);
+    }
+
+    .coffee-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(255,200,0,0.5);
+    }
+
+    /* Ad rectangle */
+    .ad-side {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+    footer {
+      padding: 24px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      background: rgba(0,0,0,0.2);
+    }
+
+    footer a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    /* =========================================================
+       ANIMATIONS
+    ========================================================= */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* Spinning gradient ring around button */
+    .btn-outer-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: conic-gradient(var(--gold), var(--teal), var(--purple), var(--gold));
+      animation: rotate 4s linear infinite;
+      z-index: 0;
+    }
+
+    .btn-outer-ring::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border-radius: 50%;
+      background: var(--bg);
+    }
+
+    /* =========================================================
+       LANGUAGE SPECIFIC CONTENT
+    ========================================================= */
+    [data-lang="en"] { display: none; }
+    [data-lang="ar"] { display: block; }
+
+    .lang-en [data-lang="en"] { display: block; }
+    .lang-en [data-lang="ar"] { display: none; }
+
+    /* For inline elements */
+    span[data-lang="en"] { display: none; }
+    span[data-lang="ar"] { display: inline; }
+    .lang-en span[data-lang="en"] { display: inline; }
+    .lang-en span[data-lang="ar"] { display: none; }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+    @media (max-width: 768px) {
+      .top-bar { padding: 14px 16px; }
+      .hero { padding: 40px 16px 30px; }
+      .main-btn { width: 160px; height: 160px; font-size: 1.2rem; }
+      .btn-icon { font-size: 2rem; }
+      .stats-row { gap: 20px; }
+      .ad-placeholder.leaderboard { height: 60px; }
+      .how-steps { gap: 10px; }
+    }
+
+    @media (max-width: 480px) {
+      .logo-ar { font-size: 1.3rem; }
+      .main-btn { width: 140px; height: 140px; }
+      .support-row { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="stars-canvas"></canvas>
+<div class="geo-overlay"></div>
+
+<div class="page-wrapper">
+
+  <!-- ===== GOOGLE ADS: TOP LEADERBOARD ===== -->
+  <div class="ad-top">
+    <!-- Replace this div with your Google AdSense code -->
+    <div class="ad-placeholder leaderboard">
+      <!-- Google AdSense 728x90 Leaderboard -->
+      <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script>
+      <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-XXXXXXXXXX" data-ad-slot="XXXXXXXXXX"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+      Google Ads — 728×90 Leaderboard
+    </div>
+  </div>
+
+  <!-- ===== NAVIGATION TOP BAR ===== -->
+  <nav class="top-bar">
+    <div class="logo">
+      <span class="logo-ar">تفشان</span>
+      <span class="logo-en">TAFSHAN.ORG</span>
+    </div>
+    <div class="top-bar-actions">
+      <div class="lang-toggle" id="langToggle" role="group" aria-label="Language selector">
+        <button class="lang-btn active" id="btn-ar" onclick="setLang('ar')">عربي</button>
+        <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <main class="hero">
+
+    <p class="hero-eyebrow">
+      <span data-lang="ar">✦ اضغط زر ← اكتشف عالم ✦</span>
+      <span data-lang="en">✦ ONE CLICK → INFINITE WEIRD ✦</span>
+    </p>
+
+    <h1 class="hero-title">
+      <span class="line1" data-lang="ar">تفشان؟</span>
+      <span class="line1" data-lang="en">Bored?</span>
+      <span class="line2" data-lang="ar">اضغط وانسَ الملل</span>
+      <span class="line2" data-lang="en">Press it. Forget Boredom.</span>
+    </h1>
+
+    <p class="hero-sub" data-lang="ar">
+      زر سحري واحد يأخذك إلى مواقع غريبة، مضحكة، ومدهشة من حول العالم.
+      لن تعرف ما الذي سيظهر لك!
+    </p>
+    <p class="hero-sub" data-lang="en">
+      One magic button takes you to weird, funny, and mind-blowing websites
+      from around the world. You'll never know what's next!
+    </p>
+
+    <!-- THE BIG BUTTON -->
+    <div class="btn-wrapper">
+      <div class="btn-ring"></div>
+      <div class="btn-ring"></div>
+      <div class="btn-outer-ring"></div>
+      <button class="main-btn" id="mainBtn" onclick="goRandom()" aria-label="Go to random website">
+        <span class="btn-icon">🎲</span>
+        <span class="btn-text-ar" data-lang="ar">تفشان!</span>
+        <span class="btn-text-en" data-lang="en">Tafshan!</span>
+      </button>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-value" id="site-count">30+</span>
+        <span class="stat-label" data-lang="ar">موقع مجنون</span>
+        <span class="stat-label" data-lang="en">Quirky Sites</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-value">∞</span>
+        <span class="stat-label" data-lang="ar">دقائق من الترفيه</span>
+        <span class="stat-label" data-lang="en">Minutes of Fun</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-value">0%</span>
+        <span class="stat-label" data-lang="ar">ملل مسموح به</span>
+        <span class="stat-label" data-lang="en">Boredom Allowed</span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="how-section">
+    <p class="how-title">
+      <span data-lang="ar">كيف يعمل</span>
+      <span data-lang="en">How it works</span>
+    </p>
+    <div class="how-steps">
+      <div class="step-card">
+        <div class="step-num">١</div>
+        <div class="step-emoji">😴</div>
+        <p class="step-text" data-lang="ar">شعرت بالملل وما تعرف تسوي شيء</p>
+        <p class="step-text" data-lang="en">You're bored out of your mind</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">٢</div>
+        <div class="step-emoji">🎲</div>
+        <p class="step-text" data-lang="ar">اضغط زر "تفشان!" واترك القدر يقرر</p>
+        <p class="step-text" data-lang="en">Press "Tafshan!" and let fate decide</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">٣</div>
+        <div class="step-emoji">🌐</div>
+        <p class="step-text" data-lang="ar">تنتقل إلى موقع عشوائي غريب ومضحك</p>
+        <p class="step-text" data-lang="en">Land on a random weird & funny site</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">٤</div>
+        <div class="step-emoji">🔁</div>
+        <p class="step-text" data-lang="ar">مللت؟ شريط علوي صغير يرجعك أو يكمل</p>
+        <p class="step-text" data-lang="en">Bored again? Top bar takes you to the next!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BOTTOM: ADS + COFFEE ===== -->
+  <div class="bottom-section">
+
+    <div class="support-row">
+
+      <!-- Buy Me a Coffee -->
+      <div class="coffee-card">
+        <div class="coffee-emoji">☕</div>
+        <h3 class="coffee-title">
+          <span data-lang="ar">أشتري لي قهوة؟</span>
+          <span data-lang="en">Buy Me a Coffee?</span>
+        </h3>
+        <p class="coffee-desc" data-lang="ar">إذا أضحكك الموقع، قهوة صغيرة تساعدني أكمل المشروع! 🙏</p>
+        <p class="coffee-desc" data-lang="en">If this made you smile, a coffee helps me keep it running! 🙏</p>
+        <!-- Replace the href with your Buy Me a Coffee link -->
+        <a href="https://buymeacoffee.com/YOUR_USERNAME" target="_blank" rel="noopener" class="coffee-btn">
+          ☕ <span data-lang="ar">اشتر لي قهوة</span><span data-lang="en">Buy Me a Coffee</span>
+        </a>
+      </div>
+
+      <!-- Google Ad Rectangle -->
+      <div class="ad-side">
+        <div class="ad-placeholder rectangle">
+          <!-- Google AdSense 300x250 Rectangle -->
+          <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script>
+          <ins class="adsbygoogle" style="display:inline-block;width:300px;height:250px" data-ad-client="ca-pub-XXXXXXXXXX" data-ad-slot="XXXXXXXXXX"></ins>
+          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+          Google Ads<br/>300×250<br/>Rectangle
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Google Ad: Second Leaderboard -->
+    <div class="ad-placeholder leaderboard">
+      <!-- Google AdSense 728x90 -->
+      Google Ads — 728×90 Leaderboard
+    </div>
+
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <p>
+      <span data-lang="ar">صُنع بـ ❤️ لكل من يشعر بالملل • </span>
+      <span data-lang="en">Made with ❤️ for the chronically bored • </span>
+      <a href="https://tafshan.org" target="_blank">Tafshan.org</a>
+    </p>
+  </footer>
+
+</div><!-- end .page-wrapper -->
+
+<script src="sites.js"></script>
+<script>
+  /* ====================================================
+     LANGUAGE SYSTEM
+  ==================================================== */
+  let currentLang = localStorage.getItem('tafshan-lang') || 'ar';
+
+  function setLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('tafshan-lang', lang);
+    const html = document.getElementById('html-root');
+
+    if (lang === 'en') {
+      html.setAttribute('lang', 'en');
+      html.setAttribute('dir', 'ltr');
+      html.classList.add('lang-en');
+      document.getElementById('btn-ar').classList.remove('active');
+      document.getElementById('btn-en').classList.add('active');
+    } else {
+      html.setAttribute('lang', 'ar');
+      html.setAttribute('dir', 'rtl');
+      html.classList.remove('lang-en');
+      document.getElementById('btn-ar').classList.add('active');
+      document.getElementById('btn-en').classList.remove('active');
+    }
+  }
+
+  // Apply on load
+  setLang(currentLang);
+
+  /* ====================================================
+     NAVIGATION
+  ==================================================== */
+  function goRandom() {
+    // Ripple animation
+    const btn = document.getElementById('mainBtn');
+    const ripple = document.createElement('span');
+    ripple.classList.add('ripple');
+    ripple.style.width = ripple.style.height = '200px';
+    ripple.style.left = '0px';
+    ripple.style.top = '0px';
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 700);
+
+    const site = getRandomSite();
+    const url = `portal.html?url=${encodeURIComponent(site.url)}&lang=${currentLang}`;
+    window.location.href = url;
+  }
+
+  /* ====================================================
+     STARFIELD
+  ==================================================== */
+  const canvas = document.getElementById('stars-canvas');
+  const ctx = canvas.getContext('2d');
+
+  let stars = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    stars = Array.from({ length: 180 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.3,
+      alpha: Math.random(),
+      speed: Math.random() * 0.008 + 0.003,
+      twinkleOffset: Math.random() * Math.PI * 2
+    }));
+  }
+
+  function drawStars(t) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      const twinkle = 0.5 + 0.5 * Math.sin(t * s.speed * 60 + s.twinkleOffset);
+      ctx.globalAlpha = s.alpha * twinkle;
+      ctx.fillStyle = Math.random() > 0.95 ? '#f5b732' : (Math.random() > 0.8 ? '#2dd4c0' : '#ffffff');
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  let lastT = 0;
+  function animate(t) {
+    lastT = t;
+    drawStars(t / 1000);
+    requestAnimationFrame(animate);
+  }
+
+  resizeCanvas();
+  requestAnimationFrame(animate);
+  window.addEventListener('resize', resizeCanvas);
+</script>
+</body>
+</html>
