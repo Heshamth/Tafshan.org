@@ -234,8 +234,9 @@
     .hero-title {
       font-size: clamp(2.8rem, 8vw, 6.5rem);
       font-weight: 900;
-      line-height: 1.05;
+      line-height: 1.2;        /* was 1.05 — too tight for Arabic */
       margin-bottom: 16px;
+      padding-bottom: 8px;     /* prevents gradient clip cutting descenders */
       opacity: 0;
       animation: fadeUp 0.7s ease 0.4s forwards;
     }
@@ -246,6 +247,7 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      padding-bottom: 6px;     /* extra room for Arabic descenders under gradient clip */
     }
 
     .hero-title .line2 {
@@ -256,6 +258,7 @@
       background-clip: text;
       font-size: 0.55em;
       margin-top: 4px;
+      padding-bottom: 6px;     /* same fix for line2 */
     }
 
     .hero-sub {

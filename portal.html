@@ -130,17 +130,7 @@
       letter-spacing: 2px;
     }
 
-    /* Visit counter pill */
-    .bar-counter-pill {
-      font-family: var(--font-en);
-      font-size: 0.68rem;
-      color: var(--text-dim);
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--border);
-      padding: 3px 10px;
-      border-radius: 50px;
-      flex-shrink: 0;
-    }
+    /* Visit counter pill — removed */
 
     /* Button group */
     .bar-btns {
@@ -576,9 +566,6 @@
     <span class="en">TAFSHAN</span>
   </a>
 
-  <!-- Visit counter -->
-  <span class="bar-counter-pill" id="bar-counter">#1</span>
-
   <!-- Buttons -->
   <div class="bar-btns">
 
@@ -750,10 +737,6 @@
     document.getElementById('card-desc').textContent  = currentLang === 'ar' ? site.descAr  : site.desc;
     document.title = `طفشان | ${site.name}`;
 
-    // Bar counter — show current position in history
-    const displayCount = historyPos + 1;
-    document.getElementById('bar-counter').textContent = `#${displayCount}`;
-
     // Progress bar — based on position within the current cycle of SITES.length
     const total    = SITES.length;
     const position = ((getVisitCount() - 1) % total) + 1;
@@ -810,9 +793,7 @@
       pushHistory(next);
       currentSite = next;
       renderCard(currentSite);
-
-      // Auto-open after card animates in
-      setTimeout(() => openSite(), 280);
+      // No auto-open — user clicks "وريني الموقع" when ready
     });
   }
 
@@ -872,9 +853,7 @@
     }
 
     renderCard(currentSite);
-
-    // Auto-open on first load
-    setTimeout(() => openSite(), 600);
+    // No auto-open — user decides when to visit via the button
   }
 
   /* ====================================================
