@@ -445,14 +445,14 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 24px 20px;
+      padding: 24px 20px 28px;
       text-align: center;
       flex: 1;
       min-width: 160px;
       max-width: 220px;
       transition: all 0.3s ease;
       position: relative;
-      overflow: hidden;
+      /* overflow: hidden removed — was clipping Arabic text descenders */
     }
 
     .step-card::before {
@@ -487,7 +487,8 @@
     .step-text {
       font-size: 0.85rem;
       color: var(--text-dim);
-      line-height: 1.6;
+      line-height: 1.75;
+      padding-bottom: 2px; /* prevents Arabic descender clipping */
     }
 
     /* =========================================================
@@ -626,18 +627,20 @@
 
     /* =========================================================
        LANGUAGE SPECIFIC CONTENT
+       Using !important to guarantee these rules always win
+       over any component-level display: block/inline rules.
     ========================================================= */
-    [data-lang="en"] { display: none; }
-    [data-lang="ar"] { display: block; }
+    /* Default: Arabic mode */
+    [data-lang="en"]      { display: none !important; }
+    [data-lang="ar"]      { display: block; }
+    span[data-lang="en"]  { display: none !important; }
+    span[data-lang="ar"]  { display: inline; }
 
-    .lang-en [data-lang="en"] { display: block; }
-    .lang-en [data-lang="ar"] { display: none; }
-
-    /* For inline elements */
-    span[data-lang="en"] { display: none; }
-    span[data-lang="ar"] { display: inline; }
-    .lang-en span[data-lang="en"] { display: inline; }
-    .lang-en span[data-lang="ar"] { display: none; }
+    /* English mode active */
+    .lang-en [data-lang="en"]     { display: block !important; }
+    .lang-en [data-lang="ar"]     { display: none !important; }
+    .lang-en span[data-lang="en"] { display: inline !important; }
+    .lang-en span[data-lang="ar"] { display: none !important; }
 
     /* =========================================================
        RESPONSIVE
@@ -730,7 +733,7 @@
     <!-- STATS -->
     <div class="stats-row">
       <div class="stat">
-        <span class="stat-value" id="site-count">100+</span>
+        <span class="stat-value" id="site-count">100</span>
         <span class="stat-label" data-lang="ar">مواقع غريبة وعجيبة</span>
         <span class="stat-label" data-lang="en">Quirky and fun Sites</span>
       </div>
@@ -865,6 +868,11 @@
 
   // Apply on load
   setLang(currentLang);
+  // Update site count dynamically from SITES array
+  const countEl = document.getElementById('site-count');
+  if (countEl && typeof SITES !== 'undefined') {
+    countEl.textContent = SITES.length + '+';
+  }
 
   /* ====================================================
      NAVIGATION

@@ -74,22 +74,21 @@
     ========================================================= */
     #portal-bar {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       height: var(--bar-h);
       z-index: 9999;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 20px;
-      gap: 10px;
+      padding: 0 16px;
+      gap: 8px;
       background: rgba(6,6,15,0.93);
       backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border);
       box-shadow: 0 4px 30px rgba(0,0,0,0.5);
     }
 
+    /* Animated rainbow underline */
     #portal-bar::after {
       content: '';
       position: absolute;
@@ -105,6 +104,7 @@
       to   { background-position: 300% 0%; }
     }
 
+    /* Logo */
     .bar-logo {
       text-decoration: none;
       display: flex;
@@ -130,7 +130,7 @@
       letter-spacing: 2px;
     }
 
-    /* Visit counter pill in bar */
+    /* Visit counter pill */
     .bar-counter-pill {
       font-family: var(--font-en);
       font-size: 0.68rem;
@@ -142,20 +142,21 @@
       flex-shrink: 0;
     }
 
+    /* Button group */
     .bar-btns {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       flex-shrink: 0;
     }
 
     .bar-btn {
       display: flex;
       align-items: center;
-      gap: 5px;
-      padding: 7px 15px;
+      gap: 4px;
+      padding: 7px 13px;
       border-radius: 50px;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 700;
       cursor: pointer;
       border: 1px solid var(--border);
@@ -173,21 +174,50 @@
       border-color: rgba(255,255,255,0.25);
     }
 
+    .bar-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Primary: Next */
     .bar-btn.primary {
       background: linear-gradient(135deg, var(--gold), #ff9a3c);
       color: #000;
       border-color: transparent;
-      box-shadow: 0 0 20px rgba(245,183,50,0.35);
+      box-shadow: 0 0 18px rgba(245,183,50,0.35);
     }
 
     .bar-btn.primary:hover {
-      box-shadow: 0 0 35px rgba(245,183,50,0.55);
+      box-shadow: 0 0 32px rgba(245,183,50,0.55);
       transform: scale(1.04);
     }
 
     .bar-btn.primary:active { transform: scale(0.96); }
 
-    /* Spinning dice */
+    /* Back button style */
+    .bar-btn.back-btn {
+      border-color: rgba(155,93,229,0.35);
+      color: #b98af5;
+    }
+
+    .bar-btn.back-btn:hover {
+      background: rgba(155,93,229,0.1);
+      border-color: var(--purple);
+    }
+
+    /* Open button style */
+    .bar-btn.open-btn {
+      border-color: rgba(45,212,192,0.3);
+      color: var(--teal);
+    }
+
+    .bar-btn.open-btn:hover {
+      background: rgba(45,212,192,0.1);
+      border-color: var(--teal);
+    }
+
+    /* Dice spin animation */
     .dice-spin {
       display: inline-block;
       animation: spinOnce 0.5s ease forwards;
@@ -199,7 +229,7 @@
       to   { transform: rotate(360deg) scale(1); }
     }
 
-    /* Lang toggle */
+    /* Language mini toggle */
     .lang-mini {
       display: flex;
       background: rgba(255,255,255,0.04);
@@ -227,12 +257,12 @@
     }
 
     /* =========================================================
-       MAIN CONTENT (below bar)
+       MAIN CONTENT
     ========================================================= */
     .portal-main {
       position: relative;
       z-index: 1;
-      padding-top: var(--bar-h);
+      padding-top: calc(var(--bar-h) + 32px);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -240,7 +270,7 @@
       justify-content: center;
       padding-left: 24px;
       padding-right: 24px;
-      padding-bottom: 40px;
+      padding-bottom: 48px;
     }
 
     /* =========================================================
@@ -250,21 +280,21 @@
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 28px;
-      padding: 52px 48px;
+      padding: 48px 44px 52px; /* extra bottom padding for Arabic descenders */
       max-width: 560px;
       width: 100%;
       text-align: center;
       position: relative;
-      overflow: hidden;
+      /* NO overflow:hidden — it clips Arabic text */
       animation: cardIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
     @keyframes cardIn {
       from { opacity: 0; transform: translateY(32px) scale(0.95); }
-      to   { opacity: 1; transform: translateY(0)   scale(1); }
+      to   { opacity: 1; transform: translateY(0)    scale(1); }
     }
 
-    /* Glowing card border accent */
+    /* Glowing border */
     .launch-card::before {
       content: '';
       position: absolute;
@@ -272,7 +302,8 @@
       border-radius: 28px;
       background: linear-gradient(135deg, var(--gold), var(--teal), var(--purple));
       z-index: -1;
-      opacity: 0.35;
+      opacity: 0.3;
+      border-radius: 29px;
     }
 
     .launch-card::after {
@@ -284,13 +315,13 @@
       z-index: -1;
     }
 
-    /* "NOW LAUNCHING" label */
+    /* "NOW LAUNCHING" eyebrow */
     .launch-eyebrow {
       font-size: 0.68rem;
       letter-spacing: 4px;
       text-transform: uppercase;
       color: var(--teal);
-      margin-bottom: 28px;
+      margin-bottom: 24px;
       opacity: 0;
       animation: fadeIn 0.4s ease 0.2s forwards;
     }
@@ -299,7 +330,7 @@
     .launch-emoji {
       font-size: 5rem;
       line-height: 1;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       display: block;
       opacity: 0;
       animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
@@ -308,15 +339,16 @@
 
     @keyframes popIn {
       from { opacity: 0; transform: scale(0.5) rotate(-10deg); }
-      to   { opacity: 1; transform: scale(1) rotate(0deg); }
+      to   { opacity: 1; transform: scale(1)   rotate(0deg); }
     }
 
     /* Site name */
     .launch-title {
-      font-size: clamp(1.5rem, 5vw, 2.4rem);
+      font-size: clamp(1.4rem, 5vw, 2.2rem);
       font-weight: 900;
-      line-height: 1.1;
+      line-height: 1.2;
       margin-bottom: 12px;
+      padding-bottom: 4px; /* prevents Arabic descender clip */
       background: linear-gradient(135deg, var(--gold), #ff9a3c);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -329,8 +361,9 @@
     .launch-desc {
       font-size: 0.95rem;
       color: var(--text-dim);
-      line-height: 1.7;
-      margin-bottom: 36px;
+      line-height: 1.8;
+      margin-bottom: 32px;
+      padding-bottom: 4px; /* prevents Arabic descender clip */
       font-weight: 300;
       opacity: 0;
       animation: fadeIn 0.4s ease 0.55s forwards;
@@ -353,9 +386,9 @@
       gap: 10px;
       width: 100%;
       max-width: 320px;
-      padding: 16px 28px;
+      padding: 15px 28px 17px; /* extra bottom for Arabic */
       border-radius: 60px;
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
       border: none;
@@ -363,17 +396,16 @@
       transition: all 0.25s ease;
       background: linear-gradient(135deg, var(--teal), #1a8f84);
       color: #000;
-      box-shadow: 0 4px 30px rgba(45,212,192,0.35);
+      box-shadow: 0 4px 28px rgba(45,212,192,0.35);
+      line-height: 1.3;
     }
 
     .launch-open-btn:hover {
       transform: translateY(-3px);
-      box-shadow: 0 10px 40px rgba(45,212,192,0.5);
+      box-shadow: 0 10px 36px rgba(45,212,192,0.5);
     }
 
-    .launch-open-btn:active {
-      transform: translateY(0);
-    }
+    .launch-open-btn:active { transform: translateY(0); }
 
     .launch-next-btn {
       display: flex;
@@ -382,27 +414,28 @@
       gap: 10px;
       width: 100%;
       max-width: 320px;
-      padding: 14px 28px;
+      padding: 13px 28px 15px;
       border-radius: 60px;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 700;
       cursor: pointer;
       border: 1px solid rgba(245,183,50,0.4);
-      background: rgba(245,183,50,0.08);
+      background: rgba(245,183,50,0.07);
       color: var(--gold);
       font-family: inherit;
       transition: all 0.25s ease;
+      line-height: 1.3;
     }
 
     .launch-next-btn:hover {
-      background: rgba(245,183,50,0.15);
+      background: rgba(245,183,50,0.14);
       border-color: var(--gold);
       transform: translateY(-2px);
       box-shadow: 0 6px 24px rgba(245,183,50,0.2);
     }
 
     /* =========================================================
-       OPENED INDICATOR
+       OPENED BADGE
     ========================================================= */
     .opened-badge {
       display: inline-flex;
@@ -415,9 +448,9 @@
       border-radius: 50px;
       font-size: 0.75rem;
       font-weight: 700;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       opacity: 0;
-      transform: translateY(-4px);
+      transform: translateY(-6px);
       transition: all 0.3s ease;
     }
 
@@ -427,10 +460,10 @@
     }
 
     /* =========================================================
-       PROGRESS BAR (how many sites left in cycle)
+       PROGRESS BAR
     ========================================================= */
     .progress-section {
-      margin-top: 36px;
+      margin-top: 28px;
       width: 100%;
       max-width: 560px;
       opacity: 0;
@@ -440,9 +473,12 @@
     .progress-label {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-size: 0.72rem;
       color: var(--text-dim);
       margin-bottom: 8px;
+      padding-bottom: 2px;
+      line-height: 1.6;
     }
 
     .progress-track {
@@ -460,10 +496,10 @@
     }
 
     /* =========================================================
-       AD SLOT BELOW CARD
+       AD SLOT
     ========================================================= */
     .ad-portal {
-      margin-top: 32px;
+      margin-top: 28px;
       display: flex;
       justify-content: center;
     }
@@ -497,31 +533,32 @@
     }
 
     /* =========================================================
-       LANGUAGE
+       LANGUAGE — !important to override any component rules
     ========================================================= */
-    [data-lang="en"] { display: none; }
-    [data-lang="ar"] { display: block; }
-    .lang-en [data-lang="en"] { display: block; }
-    .lang-en [data-lang="ar"] { display: none; }
-    span[data-lang="en"] { display: none; }
-    span[data-lang="ar"] { display: inline; }
-    .lang-en span[data-lang="en"] { display: inline; }
-    .lang-en span[data-lang="ar"] { display: none; }
+    [data-lang="en"]      { display: none !important; }
+    [data-lang="ar"]      { display: block; }
+    span[data-lang="en"]  { display: none !important; }
+    span[data-lang="ar"]  { display: inline; }
+
+    .lang-en [data-lang="en"]     { display: block !important; }
+    .lang-en [data-lang="ar"]     { display: none !important; }
+    .lang-en span[data-lang="en"] { display: inline !important; }
+    .lang-en span[data-lang="ar"] { display: none !important; }
 
     /* =========================================================
        RESPONSIVE
     ========================================================= */
     @media (max-width: 600px) {
-      .launch-card { padding: 36px 24px; border-radius: 20px; }
-      .launch-emoji { font-size: 3.8rem; }
+      .launch-card { padding: 32px 20px 36px; border-radius: 20px; }
+      .launch-emoji { font-size: 3.6rem; }
       .bar-logo .en { display: none; }
       .lang-mini { display: none; }
-      .bar-btn { padding: 6px 12px; }
+      .bar-btn { padding: 6px 10px; font-size: 0.72rem; }
       .bar-counter-pill { display: none; }
     }
 
     @media (max-width: 380px) {
-      #portal-bar { padding: 0 12px; gap: 6px; }
+      #portal-bar { padding: 0 10px; gap: 5px; }
     }
   </style>
 </head>
@@ -533,27 +570,40 @@
 <!-- ===== TOP PORTAL BAR ===== -->
 <div id="portal-bar">
 
-  <a href="index.html" class="bar-logo" title="العودة / Back">
+  <!-- Logo: home -->
+  <a href="index.html" class="bar-logo" title="الرئيسية / Home">
     <span class="ar">طفشان</span>
     <span class="en">TAFSHAN</span>
   </a>
 
+  <!-- Visit counter -->
   <span class="bar-counter-pill" id="bar-counter">#1</span>
 
+  <!-- Buttons -->
   <div class="bar-btns">
-    <button class="bar-btn" id="bar-open-btn" onclick="openSite()">
+
+    <!-- Back button -->
+    <button class="bar-btn back-btn" id="bar-back-btn" onclick="goBack()" disabled title="السابق / Previous">
+      ← <span data-lang="ar">السابق</span><span data-lang="en">Back</span>
+    </button>
+
+    <!-- Open in new tab -->
+    <button class="bar-btn open-btn" id="bar-open-btn" onclick="openSite()">
       ↗ <span data-lang="ar">افتح</span><span data-lang="en">Open</span>
     </button>
 
+    <!-- Next random site -->
     <button class="bar-btn primary" id="bar-next-btn" onclick="goNext()">
       <span id="bar-dice">🎲</span>
       <span data-lang="ar">التالي</span><span data-lang="en">Next!</span>
     </button>
 
+    <!-- Language toggle -->
     <div class="lang-mini">
       <button class="lm-btn active" id="lm-ar" onclick="setLang('ar')">ع</button>
       <button class="lm-btn" id="lm-en" onclick="setLang('en')">EN</button>
     </div>
+
   </div>
 
 </div>
@@ -569,7 +619,7 @@
       <span data-lang="en">✦ NOW LAUNCHING ✦</span>
     </p>
 
-    <!-- Opened confirmation badge (shown after auto-open) -->
+    <!-- Confirmation badge after opening -->
     <div class="opened-badge" id="opened-badge">
       <span>✓</span>
       <span data-lang="ar">تم فتح الموقع في نافذة جديدة</span>
@@ -581,18 +631,16 @@
     <p class="launch-desc" id="card-desc">...</p>
 
     <div class="launch-actions">
-      <!-- Primary: Open the site -->
       <button class="launch-open-btn" id="open-btn" onclick="openSite()">
         <span>↗</span>
         <span data-lang="ar">وريني الموقع!</span>
         <span data-lang="en">Show me the website!</span>
       </button>
 
-      <!-- Secondary: Next random site -->
       <button class="launch-next-btn" id="next-btn" onclick="goNext()">
         <span>🎲</span>
         <span data-lang="ar">ابغى واحد ثاني!</span>
-        <span data-lang="en">Give me another website!</span>
+        <span data-lang="en">Give me another one!</span>
       </button>
     </div>
 
@@ -601,19 +649,19 @@
   <!-- Progress bar -->
   <div class="progress-section">
     <div class="progress-label">
-      <span data-lang="ar" id="prog-label-ar">تم زيارة ١ من  ١٠٠ موقع</span>
-      <span data-lang="en" id="prog-label-en">Visit 1 of 100</span>
-      <span id="prog-pct" style="color: var(--gold); font-family: var(--font-en);">3%</span>
+      <span id="prog-label-ar" data-lang="ar">تم زيارة ١ من ١٠٠ موقع</span>
+      <span id="prog-label-en" data-lang="en">Visit 1 of 100</span>
+      <span id="prog-pct" style="color: var(--gold); font-family: var(--font-en); flex-shrink:0; padding-inline-start: 8px;">1%</span>
     </div>
     <div class="progress-track">
-      <div class="progress-fill" id="prog-fill" style="width: 3%"></div>
+      <div class="progress-fill" id="prog-fill" style="width: 1%"></div>
     </div>
   </div>
 
   <!-- Ad slot -->
   <div class="ad-portal">
     <div class="ad-placeholder leaderboard">
-      <!-- Google AdSense 728×90 — replace this div -->
+      <!-- Google AdSense 728×90 — replace this div when approved -->
       Google Ads — 728×90
     </div>
   </div>
@@ -623,11 +671,56 @@
 <script src="sites.js"></script>
 <script>
   /* ====================================================
-     LANGUAGE
+     STATE
   ==================================================== */
   let currentLang = 'ar';
   let currentSite = null;
 
+  // History stack — simple array of site URLs visited in order
+  // historyPos points to the currently displayed site
+  let siteHistory = [];   // [{url, name, ...}]
+  let historyPos  = -1;   // index into siteHistory
+
+  /* ====================================================
+     HISTORY HELPERS
+  ==================================================== */
+  function saveHistory() {
+    try {
+      sessionStorage.setItem('tf_hist_urls', JSON.stringify(siteHistory.map(s => s.url)));
+      sessionStorage.setItem('tf_hist_pos',  String(historyPos));
+    } catch (e) {}
+  }
+
+  function loadHistory() {
+    try {
+      const urls = JSON.parse(sessionStorage.getItem('tf_hist_urls') || '[]');
+      siteHistory = urls.map(url => SITES.find(s => s.url === url) || { url, name: url, nameAr: url, emoji: '🌐', desc: '', descAr: '' });
+      historyPos  = parseInt(sessionStorage.getItem('tf_hist_pos') || '-1', 10);
+    } catch (e) {
+      siteHistory = [];
+      historyPos  = -1;
+    }
+  }
+
+  /** Push a new site onto the history stack and move to it */
+  function pushHistory(site) {
+    // If we went back and are now going forward, truncate the "future"
+    if (historyPos < siteHistory.length - 1) {
+      siteHistory = siteHistory.slice(0, historyPos + 1);
+    }
+    siteHistory.push(site);
+    historyPos = siteHistory.length - 1;
+    saveHistory();
+  }
+
+  function updateNavButtons() {
+    const backBtn = document.getElementById('bar-back-btn');
+    if (backBtn) backBtn.disabled = historyPos <= 0;
+  }
+
+  /* ====================================================
+     LANGUAGE SYSTEM
+  ==================================================== */
   function setLang(lang) {
     currentLang = lang;
     localStorage.setItem('tafshan-lang', lang);
@@ -645,7 +738,6 @@
       document.getElementById('lm-ar').classList.add('active');
       document.getElementById('lm-en').classList.remove('active');
     }
-    // Re-render site info in the right language
     if (currentSite) renderCard(currentSite);
   }
 
@@ -658,18 +750,21 @@
     document.getElementById('card-desc').textContent  = currentLang === 'ar' ? site.descAr  : site.desc;
     document.title = `طفشان | ${site.name}`;
 
-    // Bar counter
-    const count = getVisitCount();
-    document.getElementById('bar-counter').textContent = `#${count}`;
+    // Bar counter — show current position in history
+    const displayCount = historyPos + 1;
+    document.getElementById('bar-counter').textContent = `#${displayCount}`;
 
-    // Progress bar (cycles of 30)
+    // Progress bar — based on position within the current cycle of SITES.length
     const total    = SITES.length;
-    const position = ((count - 1) % total) + 1;
-    const pct      = Math.round((position / total) * 100);
+    const position = ((getVisitCount() - 1) % total) + 1;
+    const pct      = Math.max(1, Math.round((position / total) * 100));
     document.getElementById('prog-fill').style.width = pct + '%';
     document.getElementById('prog-pct').textContent  = pct + '%';
-    document.getElementById('prog-label-ar').textContent = `زيارة ${position} من ${total}`;
+    document.getElementById('prog-label-ar').textContent = `تم زيارة ${position} من ${total} موقع`;
     document.getElementById('prog-label-en').textContent = `Visit ${position} of ${total}`;
+
+    // Nav button states
+    updateNavButtons();
   }
 
   /* ====================================================
@@ -678,43 +773,64 @@
   function openSite() {
     if (!currentSite) return;
     window.open(currentSite.url, '_blank', 'noopener,noreferrer');
-    // Show "opened" confirmation badge
-    const badge = document.getElementById('opened-badge');
-    badge.classList.add('show');
+    document.getElementById('opened-badge').classList.add('show');
   }
 
   /* ====================================================
-     GO NEXT — pick next from shuffle queue, re-render card, auto-open
+     ANIMATE CARD TRANSITION
+  ==================================================== */
+  function animateCard(callback) {
+    const card = document.getElementById('launch-card');
+    card.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+    card.style.opacity    = '0';
+    card.style.transform  = 'translateY(14px) scale(0.97)';
+
+    setTimeout(() => {
+      callback();
+      card.style.opacity   = '1';
+      card.style.transform = 'translateY(0) scale(1)';
+    }, 200);
+  }
+
+  /* ====================================================
+     GO NEXT
   ==================================================== */
   function goNext() {
-    // Spin the dice icon
+    // Spin dice in bar
     const dice = document.getElementById('bar-dice');
     dice.classList.remove('dice-spin');
     void dice.offsetWidth;
     dice.classList.add('dice-spin');
     dice.addEventListener('animationend', () => dice.classList.remove('dice-spin'), { once: true });
 
-    // Hide the opened badge immediately
     document.getElementById('opened-badge').classList.remove('show');
 
-    // Animate card out, swap content, animate back in
-    const card = document.getElementById('launch-card');
-    card.style.transition = 'opacity 0.2s, transform 0.2s';
-    card.style.opacity    = '0';
-    card.style.transform  = 'translateY(16px) scale(0.97)';
-
-    setTimeout(() => {
-      currentSite = getNextSite();
+    animateCard(() => {
+      const next = getNextSite();
+      pushHistory(next);
+      currentSite = next;
       renderCard(currentSite);
 
-      card.style.opacity   = '1';
-      card.style.transform = 'translateY(0) scale(1)';
+      // Auto-open after card animates in
+      setTimeout(() => openSite(), 280);
+    });
+  }
 
-      // Auto-open new site after card is visible
-      setTimeout(() => {
-        openSite();
-      }, 300);
-    }, 220);
+  /* ====================================================
+     GO BACK
+  ==================================================== */
+  function goBack() {
+    if (historyPos <= 0) return;
+
+    document.getElementById('opened-badge').classList.remove('show');
+
+    animateCard(() => {
+      historyPos--;
+      saveHistory();
+      currentSite = siteHistory[historyPos];
+      renderCard(currentSite);
+      // Don't auto-open on back — user is revisiting, let them decide
+    });
   }
 
   /* ====================================================
@@ -722,12 +838,15 @@
   ==================================================== */
   function init() {
     // Language
-    const params   = new URLSearchParams(window.location.search);
-    const urlLang  = params.get('lang');
+    const params    = new URLSearchParams(window.location.search);
+    const urlLang   = params.get('lang');
     const savedLang = localStorage.getItem('tafshan-lang');
     setLang(urlLang || savedLang || 'ar');
 
-    // Site: read from URL param (set by index.html's goRandom)
+    // Load existing history from this session
+    loadHistory();
+
+    // Site from URL param (passed by index.html on first click)
     const urlSiteEncoded = params.get('url');
 
     if (urlSiteEncoded) {
@@ -740,17 +859,22 @@
         descAr: '',
         emoji:  '🌐'
       };
+    } else if (historyPos >= 0 && siteHistory.length > 0) {
+      // Returning from external tab — restore last card
+      currentSite = siteHistory[historyPos];
     } else {
-      // No URL param — pick from queue
       currentSite = getNextSite();
+    }
+
+    // Push first site onto history if not already there
+    if (historyPos < 0 || siteHistory.length === 0 || siteHistory[historyPos]?.url !== currentSite.url) {
+      pushHistory(currentSite);
     }
 
     renderCard(currentSite);
 
-    // Auto-open the site as soon as the card is rendered
-    setTimeout(() => {
-      openSite();
-    }, 600);
+    // Auto-open on first load
+    setTimeout(() => openSite(), 600);
   }
 
   /* ====================================================
@@ -795,7 +919,6 @@
   requestAnimationFrame(animate);
   window.addEventListener('resize', resizeCanvas);
 
-  // Boot
   init();
 </script>
 </body>
